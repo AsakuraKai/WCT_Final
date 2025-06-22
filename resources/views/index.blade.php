@@ -422,11 +422,73 @@
 
         .glow-text {
             animation: textGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes textGlow {
+        }        @keyframes textGlow {
             from { text-shadow: 0 0 10px var(--neon-cyan); }
             to { text-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); }
+        }
+
+        /* Status Badges */
+        .status-badges {
+            position: absolute;
+            top: 100px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .status-badges .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s infinite;
+        }
+
+        .badge-success {
+            background: rgba(57, 255, 20, 0.2);
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+        }
+
+        .badge-warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .badge-danger {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border-color: #dc3545;
+        }        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Demo Notice */
+        .demo-notice {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050;
+            background: rgba(13, 202, 240, 0.1);
+            border: 1px solid #0dcaf0;
+            color: #0dcaf0;
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 15px rgba(13, 202, 240, 0.3);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -556,14 +618,23 @@
                             @endauth
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
+                </div>                <div class="col-lg-6">
                     <div class="text-center">
                         <div style="font-size: 20rem; color: var(--neon-cyan); opacity: 0.1;">
                             <i class="bi bi-controller"></i>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Status Badges -->
+        <div class="status-badges">
+            <div class="badge badge-success" id="server-status">
+                <i class="bi bi-server"></i> Server Online
+            </div>
+            <div class="badge badge-warning" id="database-status">
+                <i class="bi bi-database"></i> Database Checking...
             </div>
         </div>
     </section>
@@ -797,7 +868,53 @@
 
         document.querySelectorAll('.fade-in-up').forEach(el => {
             observer.observe(el);
-        });
+        });        // Check database status
+        function checkDatabaseStatus() {
+            fetch('/api-data')
+                .then(response => response.json())
+                .then(data => {
+                    const dbStatus = document.getElementById('database-status');
+                    if (data.status === 'connected') {
+                        dbStatus.innerHTML = '<i class="bi bi-database"></i> Database Connected';
+                        dbStatus.className = 'badge badge-success';
+                        // Hide demo notice if exists
+                        const demoNotice = document.getElementById('demo-notice');
+                        if (demoNotice) demoNotice.style.display = 'none';
+                    } else {
+                        dbStatus.innerHTML = '<i class="bi bi-database"></i> Database Disconnected';
+                        dbStatus.className = 'badge badge-warning';
+                        // Show demo notice
+                        showDemoNotice();
+                    }
+                })
+                .catch(error => {
+                    const dbStatus = document.getElementById('database-status');
+                    dbStatus.innerHTML = '<i class="bi bi-database"></i> Database Error';
+                    dbStatus.className = 'badge badge-danger';
+                    showDemoNotice();
+                });
+        }
+
+        function showDemoNotice() {
+            let demoNotice = document.getElementById('demo-notice');
+            if (!demoNotice) {
+                demoNotice = document.createElement('div');
+                demoNotice.id = 'demo-notice';
+                demoNotice.className = 'alert alert-info demo-notice';
+                demoNotice.innerHTML = `
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Demo Mode:</strong> Database is unavailable. Showing demo data for testing purposes.
+                `;
+                document.body.appendChild(demoNotice);
+            }
+            demoNotice.style.display = 'block';
+        }
+
+        // Check status on page load
+        checkDatabaseStatus();
+        
+        // Check status every 30 seconds
+        setInterval(checkDatabaseStatus, 30000);
 
         // Counter animation
         function animateCounter(element) {

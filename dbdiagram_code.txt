@@ -1,0 +1,99 @@
+// Gaming API Database Schema for dbdiagram.io
+// Copy this code to https://dbdiagram.io/ to generate a visual diagram
+
+Table users {
+  id varchar(36) [pk]
+  name varchar(255)
+  email varchar(255) [unique]
+  email_verified_at datetime [null]
+  password varchar(255)
+  remember_token varchar(100) [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table publishers {
+  id bigint [pk, increment]
+  name varchar(255)
+  website varchar(255) [null]
+  founded_year int [null]
+  description text [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table developers {
+  id bigint [pk, increment]
+  name varchar(255)
+  website varchar(255) [null]
+  founded_year int [null]
+  description text [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table genres {
+  id bigint [pk, increment]
+  name varchar(255)
+  description text [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table platforms {
+  id bigint [pk, increment]
+  name varchar(255)
+  manufacturer varchar(255) [null]
+  release_date date [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table games {
+  id bigint [pk, increment]
+  title varchar(255)
+  slug varchar(255) [null]
+  description text [null]
+  release_date date [null]
+  price decimal(8,2) [null]
+  steam_app_id int [null]
+  is_from_steam boolean [default: false]
+  publisher_id bigint [ref: > publishers.id, null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table game_developer {
+  id bigint [pk, increment]
+  game_id bigint [ref: > games.id]
+  developer_id bigint [ref: > developers.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table game_genre {
+  id bigint [pk, increment]
+  game_id bigint [ref: > games.id]
+  genre_id bigint [ref: > genres.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table game_platform {
+  id bigint [pk, increment]
+  game_id bigint [ref: > games.id]
+  platform_id bigint [ref: > platforms.id]
+  release_date date [null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table reviews {
+  id bigint [pk, increment]
+  game_id bigint [ref: > games.id]
+  user_id varchar(36) [ref: > users.id]
+  rating int [note: '1-5 stars']
+  comment text [null]
+  created_at datetime
+  updated_at datetime
+}

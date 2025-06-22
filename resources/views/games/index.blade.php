@@ -32,8 +32,7 @@
                 <i class="bi bi-cpu text-neon-purple me-2 fs-4"></i>
                 <h5 class="font-gaming mb-0">Game Scanner</h5>
             </div>
-            <form method="GET" action="{{ route('games.index') }}" class="row g-3">
-                <div class="col-lg-4 col-md-6">
+            <form method="GET" action="{{ route('games.index') }}" class="row g-3">                <div class="col-lg-4 col-md-6">
                     <div class="input-group-neon">
                         <span class="input-group-text">
                             <i class="bi bi-search text-neon-cyan"></i>
@@ -45,8 +44,8 @@
                                value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <select name="genre" class="form-select-neon">
+                <div class="col-lg-2 col-md-6">
+                    <select name="genre" class="form-select-neon" onchange="this.form.submit()">
                         <option value="">🎮 All Genres</option>
                         @foreach($genres as $genre)
                             <option value="{{ $genre->id }}" 
@@ -56,8 +55,8 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <select name="platform" class="form-select-neon">
+                <div class="col-lg-2 col-md-6">
+                    <select name="platform" class="form-select-neon" onchange="this.form.submit()">
                         <option value="">💻 All Platforms</option>
                         @foreach($platforms as $platform)
                             <option value="{{ $platform->id }}" 
@@ -68,9 +67,20 @@
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-6">
+                    <select name="publisher" class="form-select-neon" onchange="this.form.submit()">
+                        <option value="">🏢 All Publishers</option>
+                        @foreach($publishers as $publisher)
+                            <option value="{{ $publisher->id }}" 
+                                    {{ request('publisher') == $publisher->id ? 'selected' : '' }}>
+                                {{ $publisher->name }}
+                            </option>
+                        @endforeach
+                    </select>                </div>
+                <div class="col-lg-2 col-md-6">
                     <button type="submit" class="btn btn-neon w-100">
                         <i class="bi bi-funnel"></i> Scan
-                    </button>                </div>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -88,9 +98,8 @@
                             Game Database
                         @endif
                     </h5>
-                    <span class="badge badge-neon">{{ $games->total() }} Games</span>
-                </div>
-                @if(request()->hasAny(['search', 'genre', 'platform']))
+                    <span class="badge badge-neon">{{ $games->total() }} Games</span>                </div>
+                @if(request()->hasAny(['search', 'genre', 'platform', 'publisher']))
                     <a href="{{ route('games.index') }}" class="btn btn-outline-neon btn-sm">
                         <i class="bi bi-arrow-clockwise"></i> Reset Filters
                     </a>
@@ -124,11 +133,12 @@
                     
                     <div class="game-content">
                         <h5 class="game-title font-tech">{{ $game->title }}</h5>                        
-                        <div class="game-meta">
-                            @if($game->publisher)
+                        <div class="game-meta">                            @if($game->publisher)
                                 <div class="meta-item">
                                     <i class="bi bi-building text-neon-orange"></i>
-                                    <span>{{ $game->publisher->name }}</span>
+                                    <a href="{{ route('games.index', ['publisher' => $game->publisher->id]) }}" class="publisher-link">
+                                        {{ $game->publisher->name }}
+                                    </a>
                                 </div>
                             @endif
                             
@@ -146,11 +156,10 @@
                             </p>
                         @endif
                         
-                        <!-- Gaming Tags -->
-                        @if($game->genres->count() > 0)
+                        <!-- Gaming Tags -->                        @if($game->genres->count() > 0)
                             <div class="game-tags mb-3">
                                 @foreach($game->genres->take(3) as $genre)
-                                    <span class="tag-neon">{{ $genre->name }}</span>
+                                    <a href="{{ route('games.index', ['genre' => $genre->id]) }}" class="tag-neon clickable-tag">{{ $genre->name }}</a>
                                 @endforeach
                                 @if($game->genres->count() > 3)
                                     <span class="tag-more">+{{ $game->genres->count() - 3 }}</span>
@@ -183,20 +192,21 @@
                                 </div>
                             @endif
                         </div>
-                        
-                        <!-- Platform Icons -->
+                          <!-- Platform Icons -->
                         @if($game->platforms->count() > 0)
                             <div class="platform-icons">
                                 @foreach($game->platforms as $platform)
-                                    @if($platform->name == 'Windows')
-                                        <i class="bi bi-windows platform-icon" title="Windows"></i>
-                                    @elseif($platform->name == 'Mac')
-                                        <i class="bi bi-apple platform-icon" title="Mac"></i>
-                                    @elseif($platform->name == 'Linux')
-                                        <i class="bi bi-ubuntu platform-icon" title="Linux"></i>
-                                    @else
-                                        <span class="platform-badge">{{ $platform->name }}</span>
-                                    @endif
+                                    <a href="{{ route('games.index', ['platform' => $platform->id]) }}" class="platform-link" title="Filter by {{ $platform->name }}">
+                                        @if($platform->name == 'Windows')
+                                            <i class="bi bi-windows platform-icon" title="Windows"></i>
+                                        @elseif($platform->name == 'Mac')
+                                            <i class="bi bi-apple platform-icon" title="Mac"></i>
+                                        @elseif($platform->name == 'Linux')
+                                            <i class="bi bi-ubuntu platform-icon" title="Linux"></i>
+                                        @else
+                                            <span class="platform-badge">{{ $platform->name }}</span>
+                                        @endif
+                                    </a>
                                 @endforeach
                             </div>
                         @endif

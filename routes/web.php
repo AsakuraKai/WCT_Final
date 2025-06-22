@@ -16,9 +16,9 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Public Routes
+// Public Routes (now work without database)
 Route::get('/games', [WebController::class, 'games'])->name('games.index');
-Route::get('/games/{game}', [WebController::class, 'showGame'])->name('games.show');
+Route::get('/games/{id}', [WebController::class, 'showGame'])->name('games.show');
 Route::get('/steam/search', [WebController::class, 'steamSearch'])->name('steam.search');
 Route::get('/steam/popular', [WebController::class, 'popularGames'])->name('steam.popular');
 
@@ -27,8 +27,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [WebController::class, 'dashboard'])->name('dashboard');
     Route::get('/users', [WebController::class, 'users'])->name('users.index');
     Route::post('/users', [WebController::class, 'storeUser'])->name('users.store');
-    Route::delete('/users/{user}', [WebController::class, 'deleteUser'])->name('users.destroy');
+    Route::delete('/users/{id}', [WebController::class, 'deleteUser'])->name('users.destroy');
     Route::post('/steam/import', [WebController::class, 'importGame'])->name('steam.import');
+});
+
+// API Data endpoint for AJAX (now works without database)
+Route::get('/api-data', [WebController::class, 'apiData'])->name('api.data');
+
+// API Documentation route
+Route::get('/docs', function () {
+    return view('api.documentation');
 });
 
 // API Data endpoint for AJAX

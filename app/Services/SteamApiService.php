@@ -162,15 +162,16 @@ class SteamApiService
 
     /**
      * Import a game from Steam
-     */
-    public function importGame($appId)
+     */    public function importGame($appId)
     {
         try {
             $gameData = $this->getGameDetails($appId);
             
             if (!$gameData) {
                 return null;
-            }            return [
+            }
+            
+            return [
                 'title' => $gameData['name'] ?? 'Unknown Game',
                 'slug' => $this->createSlug($gameData['name'] ?? 'unknown-game'),
                 'description' => $gameData['short_description'] ?? $gameData['detailed_description'] ?? '',

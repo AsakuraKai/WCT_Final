@@ -65,11 +65,14 @@
                     </div>
 
                     <!-- Game Intel Grid -->
-                    <div class="game-intel-grid">
-                        @if($game->publisher)
+                    <div class="game-intel-grid">                        @if($game->publisher)
                             <div class="intel-item">
                                 <div class="intel-label">Publisher</div>
-                                <div class="intel-value">{{ $game->publisher->name }}</div>
+                                <div class="intel-value">
+                                    <a href="{{ route('games.index', ['publisher' => $game->publisher->id]) }}" class="publisher-link">
+                                        {{ $game->publisher->name }}
+                                    </a>
+                                </div>
                             </div>
                         @endif
                         
@@ -88,33 +91,32 @@
                         @endif
                     </div>
 
-                    <!-- Gaming Tags -->
-                    @if($game->genres->count() > 0)
+                    <!-- Gaming Tags -->                    @if($game->genres->count() > 0)
                         <div class="game-tags-section">
                             <div class="tags-label">Game Modes</div>
                             <div class="game-tags">
                                 @foreach($game->genres as $genre)
-                                    <span class="tag-neon">{{ $genre->name }}</span>
+                                    <a href="{{ route('games.index', ['genre' => $genre->id]) }}" class="tag-neon clickable-tag">{{ $genre->name }}</a>
                                 @endforeach
                             </div>
                         </div>
-                    @endif
-
-                    <!-- Platform Support -->
+                    @endif                    <!-- Platform Support -->
                     @if($game->platforms->count() > 0)
                         <div class="platform-support">
                             <div class="platform-label">Compatible Systems</div>
                             <div class="platform-icons">
                                 @foreach($game->platforms as $platform)
-                                    @if($platform->name == 'Windows')
-                                        <i class="bi bi-windows platform-icon" title="Windows"></i>
-                                    @elseif($platform->name == 'Mac')
-                                        <i class="bi bi-apple platform-icon" title="Mac"></i>
-                                    @elseif($platform->name == 'Linux')
-                                        <i class="bi bi-ubuntu platform-icon" title="Linux"></i>
-                                    @else
-                                        <span class="platform-badge">{{ $platform->name }}</span>
-                                    @endif
+                                    <a href="{{ route('games.index', ['platform' => $platform->id]) }}" class="platform-link" title="Filter by {{ $platform->name }}">
+                                        @if($platform->name == 'Windows')
+                                            <i class="bi bi-windows platform-icon" title="Windows"></i>
+                                        @elseif($platform->name == 'Mac')
+                                            <i class="bi bi-apple platform-icon" title="Mac"></i>
+                                        @elseif($platform->name == 'Linux')
+                                            <i class="bi bi-ubuntu platform-icon" title="Linux"></i>
+                                        @else
+                                            <span class="platform-badge">{{ $platform->name }}</span>
+                                        @endif
+                                    </a>
                                 @endforeach
                             </div>
                         </div>

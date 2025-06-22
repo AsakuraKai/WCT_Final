@@ -409,11 +409,97 @@
 
         .glow-text {
             animation: textGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes textGlow {
+        }        @keyframes textGlow {
             from { text-shadow: 0 0 10px var(--neon-cyan); }
             to { text-shadow: 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan); }
+        }
+
+        /* Clickable Tags and Platform Links */
+        .clickable-tag {
+            text-decoration: none !important;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .clickable-tag:hover {
+            color: var(--neon-cyan) !important;
+            transform: translateY(-2px);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .clickable-tag::after {
+            content: '🔗';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .clickable-tag:hover::after {
+            opacity: 1;
+        }
+
+        .platform-link {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .platform-link:hover {
+            color: var(--neon-cyan) !important;
+            transform: scale(1.1);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .platform-link .platform-icon {
+            transition: all 0.3s ease;
+        }
+
+        .platform-link:hover .platform-icon {
+            color: var(--neon-cyan) !important;
+        }
+
+        .platform-link .platform-badge {
+            transition: all 0.3s ease;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }        .platform-link:hover .platform-badge {
+            background: var(--neon-cyan);
+            color: var(--bg-primary) !important;
+        }
+
+        /* Publisher Links */
+        .publisher-link {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .publisher-link:hover {
+            color: var(--neon-purple) !important;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .publisher-link::after {
+            content: '🏢';
+            position: absolute;
+            top: -2px;
+            right: -15px;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .publisher-link:hover::after {
+            opacity: 1;
         }
     </style>
     @yield('styles')
